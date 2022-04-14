@@ -1,27 +1,26 @@
-#Programme 59 - lnterblocage
+#prog58-2 section critique
 import threading
-
-verrou1 = threading.Lock()
-verrou2 = threading.Lock()
+verrou = threading.lock()
 
 
-def f1():
-    verrou1.acquire()
-    print("Section critique 1.1\n")
-    verrou2.acquire()
-    print("Section critique 1.2\n")
-    verrou2.release()
-    verrou1.release()
+COMPTEUR= 0
 
-def f2():
-    verrou2.acquire()
-    print("Section critique 2.1\n")
-    verrou1.acquire()
-    print("Section critique 2.2\n")
-    verrou1.release()
-    verrou2.release()
-    
-t1 = threading.Thread(target=f1, args=[])
-t2 = threading.Thread(target=f2, args=[])
-t1.start()
-t2.start()
+def incrc():
+    global COMPTEUR
+    for c in range(100000):
+        verrou.acquire()
+        ## début section critique
+        v = COMPTEUR
+        COMPTEUR = v + 1
+        ## fin   section critique
+        verrou.release()
+
+th = []
+for n in range(4):
+    t = threading.Thread(target=incrc, args=[])
+    t .start()
+    th.append(t)
+
+for t in th :
+    t.join()
+print("valeur finale", COMPTEUR)

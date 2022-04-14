@@ -1,3 +1,4 @@
+#prog56
 from os import getpid
 pid = str (getpid())
 with open ("test.txt" , "w" ) as fichier :
